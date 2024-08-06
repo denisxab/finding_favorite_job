@@ -13,8 +13,8 @@ CURRENCY = "RUR"
 SCHEDULE: Literal["full_time", "remote", "part_time"] = "remote"
 # Текст поискового запроса
 TARGET_TEXT_SEARCH = {
-    "python_detail": """NAME:((python OR python backend OR python django OR django OR DRF OR python fastapi OR python медицина) AND (NOT QA NOT тестировщик NOT fullstack NOT "Full Stack")) DESCRIPTION:(python OR django OR fastapi OR drf OR rest api OR медицина)""",
-    "python_all": "python OR python backend OR python django OR django OR DRF OR python fastapi OR python медицина",
+    "python_detail": """NAME:((python OR python backend OR python django OR django OR DRF OR python fastapi) AND (NOT QA NOT тестировщик NOT fullstack NOT "Full Stack")) DESCRIPTION:(python OR django OR fastapi OR drf OR rest api)""",
+    "python_all": "python OR python backend OR python django OR django OR DRF OR python fastapi",
 }["python_detail"]
 
 
