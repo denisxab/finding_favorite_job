@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "hh-parse"
+version = "0.1.0"
+description = ""
+authors = ["Денис Кустов <you@example.com>"]
+readme = "README.md"
+packages = [{include = "hh_parse"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.3"
+lxml = "^5.2.2"
+sqlalchemy = "^2.0.31"
+aiohttp = "^3.10.0"
+async-timeout = "^4.0.3"
+pytz = "^2024.1"
+markdownify = "^0.13.1"
+nltk = "^3.8.1"
+fastapi = "^0.112.0"
+uvicorn = "^0.30.5"
+pydantic = "^2.8.2"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.1"
+black = "^24.8.0"
+pylint = "^3.2.6"
+django-debug-toolbar = "^4.4.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
