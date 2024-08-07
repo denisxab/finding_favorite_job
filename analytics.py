@@ -22,15 +22,11 @@ class ResponseSearch:
     job: str
 
 
-def search_db_for_jobs_that_fit_my_resume(
-    page: int, page_count: int
-) -> list[ResponseSearch]:
+def search_db_for_jobs_that_fit_my_resume(limit: int = 100) -> list[ResponseSearch]:
     """Поиск вакансий которые подходят под мое резюме."""
 
     resume_tokens = TokenizationResumeAndVacancies.resume()
-    job_descriptions_tokens = TokenizationResumeAndVacancies.job_descriptions(
-        page, page_count
-    )
+    job_descriptions_tokens = TokenizationResumeAndVacancies.job_descriptions()
 
     response = []
     for id_, job in job_descriptions_tokens.items():
@@ -66,7 +62,10 @@ def search_db_for_jobs_that_fit_my_resume(
         )
     sort_response = sorted(response, key=lambda x: x.score_preference, reverse=True)
 
-    return sort_response
+    if limit > 0:
+        return sort_response[:limit]
+    else:
+        return sort_response
 
 
 @dataclass

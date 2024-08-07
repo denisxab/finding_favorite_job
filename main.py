@@ -79,13 +79,14 @@ def api_get_by_api_hh_the_text_of_the_vacancy():
     summary="Поиск вакансий которые подходят под мое резюме",
 )
 def api_search_db_for_jobs_that_fit_my_resume(
-    page: int = Query(default=0, description="Номер страницы"),
-    page_count: int = Query(default=30, description="Сколько записей на странице"),
+    limit: int = Query(
+        default=30, description="Ограничить количество записей в ответе"
+    ),
 ) -> list[ResponseSearch]:
     """
     Поиск вакансий которые подходят под мое резюме
     """
-    return search_db_for_jobs_that_fit_my_resume(page, page_count)
+    return search_db_for_jobs_that_fit_my_resume(limit)
 
 
 @app.get(

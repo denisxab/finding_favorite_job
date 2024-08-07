@@ -42,24 +42,21 @@ class TokenizationResumeAndVacancies:
         return client_api_text_to_tokens(read_resume_text())
 
     @staticmethod
-    def job_descriptions(page: int = None, page_count: int = None):
+    def job_descriptions():
         """
         Токенизация текста вакансий
         """
         Session = sessionmaker(bind=BaseEngineSql)
         with Session() as session:
-            job_descriptions = session.query(Vacancy.id, Vacancy.description).filter(
-                # Открыта
-                # Vacancy.type_open == "open",
-                # Не откликался на вакансию
-                Vacancy.send_offer
-                == False,  # noqa E712
-            )
-
-            if page is not None and page_count is not None:
-                job_descriptions = job_descriptions.limit(page_count).offset(
-                    (page - 1) * page_count
+            job_descriptions = (
+                session.query(Vacancy.id, Vacancy.description).filter(
+                    # Открыта
+                    # Vacancy.type_open == "open",
+                    # Не откликался на вакансию
+                    Vacancy.send_offer
+                    == False,  # noqa E712
                 )
+            )
 
         job_descriptions = {job[0]: job[1] for job in job_descriptions}
 
