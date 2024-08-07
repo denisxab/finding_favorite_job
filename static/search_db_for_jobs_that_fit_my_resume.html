@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск подходящих вакансий</title>
+    <link rel="shortcut icon" type="image/svg" href="favicon.svg"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.3/marked.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #limitInput {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .job-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .job-card h2 {
+            margin-top: 0;
+        }
+
+        .token-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .token {
+            background-color: #e9e9e9;
+            padding: 3px 7px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        .common-token {
+            background-color: #c8e6c9;
+        }
+
+        .missing-token {
+            background-color: #ffcdd2;
+        }
+
+        .job-text {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        #results {
+            margin-top: 1rem;
+        }
+
+        .tokens-section {
+            display: none;
+        }
+
+        .toggle-tokens {
+            background-color: #2196F3;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Поиск подходящих вакансий</h1>
+        <div>
+            <label for="limitInput">Количество результатов:</label>
+            <input type="number" id="limitInput" value="30" min="1">
+        </div>
+        <button onclick="searchJobs()">Поиск вакансий</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function searchJobs() {
+            const limit = document.getElementById('limitInput').value;
+            const response = await fetch(`http://localhost:8912/search_db_for_jobs_that_fit_my_resume?limit=${limit}`);
+            const data = await response.json();
+            displayResults(data);
+        }
+
+        function displayResults(jobs) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            jobs.forEach((job, index) => {
+                const jobCard = document.createElement('div');
+                jobCard.className = 'job-card';
+
+                const jobLink = `https://spb.hh.ru/vacancy/${job.vacancy_id}`;
+                const commonTokens = JSON.parse(job.common_tokens);
+                const missingTokens = JSON.parse(job.missing_tokens);
+                const jobTokens = JSON.parse(job.job);
+
+                jobCard.innerHTML = `
+                    <h2><a href="${jobLink}" target="_blank">Вакансия ${job.vacancy_id}</a></h2>
+                    <p>Очки совпадения: ${job.score.toFixed(2)}</p>
+                    <p>Очки с учетом предпочтений: ${job.score_preference.toFixed(2)}</p>
+                    <button class="toggle-tokens" onclick="toggleTokens(${index})">Показать/скрыть токены</button>
+                    <div class="tokens-section" id="tokens-${index}">
+                        <h3>Общие токены:</h3>
+                        <div class="token-list">${commonTokens.map(token => `<span class="token common-token">${token}</span>`).join('')}</div>
+                        <h3>Отсутствующие токены:</h3>
+                        <div class="token-list">${missingTokens.map(token => `<span class="token missing-token">${token}</span>`).join('')}</div>
+                        <h3>Токены вакансии:</h3>
+                        <div class="token-list">${jobTokens.map(token => `<span class="token">${token}</span>`).join('')}</div>
+                    </div>
+                    <h3>Текст вакансии:</h3>
+                    <div class="job-text">${marked.parse(job.job_text)}</div>
+                `;
+
+                resultsDiv.appendChild(jobCard);
+            });
+        }
+
+        function toggleTokens(index) {
+            const tokensSection = document.getElementById(`tokens-${index}`);
+            if (tokensSection.style.display === 'none' || tokensSection.style.display === '') {
+                tokensSection.style.display = 'block';
+            } else {
+                tokensSection.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

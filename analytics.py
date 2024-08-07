@@ -20,13 +20,17 @@ class ResponseSearch:
     common_tokens: str
     missing_tokens: str
     job: str
+    job_text: str
 
 
 def search_db_for_jobs_that_fit_my_resume(limit: int = 100) -> list[ResponseSearch]:
     """Поиск вакансий которые подходят под мое резюме."""
 
     resume_tokens = TokenizationResumeAndVacancies.resume()
-    job_descriptions_tokens = TokenizationResumeAndVacancies.job_descriptions()
+    (
+        job_descriptions_tokens,
+        job_descriptions,
+    ) = TokenizationResumeAndVacancies.job_descriptions()
 
     response = []
     for id_, job in job_descriptions_tokens.items():
@@ -58,6 +62,7 @@ def search_db_for_jobs_that_fit_my_resume(limit: int = 100) -> list[ResponseSear
                 common_tokens=json.dumps(list(common_tokens), ensure_ascii=False),
                 missing_tokens=json.dumps(list(missing_tokens), ensure_ascii=False),
                 job=json.dumps(list(job), ensure_ascii=False),
+                job_text=job_descriptions[id_],
             )
         )
     sort_response = sorted(response, key=lambda x: x.score_preference, reverse=True)

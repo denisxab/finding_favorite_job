@@ -3,6 +3,7 @@
 """
 
 from fastapi import FastAPI, Query
+from fastapi.staticfiles import StaticFiles
 
 from analytics import (
     ResponseFrequentSkills,
@@ -116,6 +117,9 @@ def api_find_out_the_statistics_of_frequent_skills(
         type_token,
     )
 
+
+# Подключить статические файлы
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
     import uvicorn

@@ -6,7 +6,7 @@
 
 ## Целевая аудитория
 
-Эта статья предназначена для backend-разработчиков, ищущих работу на hh.ru. Если вы действительно компетентный специалист, то сможете разобраться с этим спартанским(неудобным) интерфейсом. Высокий порог входа – не следствие моей лени, а намеренное решение проверить ваши навыки.
+Эта статья предназначена для backend-разработчиков, ищущих работу на hh.ru.
 
 ## Концепция системы
 
@@ -80,6 +80,11 @@ python -m nlp.server
 
 ### `/search_db_for_jobs_that_fit_my_resume`
 
+> http://localhost:8912/static/search_db_for_jobs_that_fit_my_resume.html
+
+
+![photo 1](./docs/search_db_for_jobs_that_fit_my_resume.png)
+
 ```jsonc
 [
     {
@@ -96,6 +101,11 @@ python -m nlp.server
 Результаты сортируются по полю `score_preference`.
 
 ### `/find_out_the_statistics_of_frequent_skills`
+
+> http://localhost:8912/static/find_out_the_statistics_of_frequent_skills.html
+
+![photo 2](./docs/find_out_the_statistics_of_frequent_skills.png)
+
 
 ```jsonc
 {

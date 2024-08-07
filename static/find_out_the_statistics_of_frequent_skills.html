@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/svg" href="favicon.svg"> 
+    <title>Статистика частых навыков</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        select, button {
+            margin: 10px 0;
+            padding: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Статистика частых навыков</h1>
+        <div>
+            <label for="langSelect">Язык слов:</label>
+            <select id="langSelect">
+                <option value="all">Все</option>
+                <option value="eng">Английский</option>
+            </select>
+        </div>
+        <div>
+            <label for="typeTokenSelect">Тип токенов:</label>
+            <select id="typeTokenSelect">
+                <option value="missing_token">Отсутствующие в резюме</option>
+                <option value="common_tokens">Присутствующие в резюме</option>
+            </select>
+        </div>
+        <button onclick="fetchStatistics()">Получить статистику</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function fetchStatistics() {
+            const lang = document.getElementById('langSelect').value;
+            const typeToken = document.getElementById('typeTokenSelect').value;
+            const url = `http://localhost:8912/find_out_the_statistics_of_frequent_skills?lang=${lang}&type_token=${typeToken}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = 'Произошла ошибка при получении данных.';
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            let html = `
+                <h2>Результаты (${data.type_token})</h2>
+                <p>Общее количество уникальных слов: ${data.all_count}</p>
+                <table>
+                    <tr>
+                        <th>Слово</th>
+                        <th>Частота</th>
+                        <th>Процент</th>
+                    </tr>
+            `;
+
+            data.message.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.count}</td>
+                        <td>${item.count_p.toFixed(2)}%</td>
+                    </tr>
+                `;
+            });
+
+            html += '</table>';
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

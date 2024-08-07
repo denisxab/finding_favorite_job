@@ -220,7 +220,7 @@ def tokenize_vacancies_and_resumes_db():
     # Токенизация резюме
     resume_tokens = TokenizationResumeAndVacancies.resume()
     # Токенизация вакансий
-    job_tokens: dict[int, str] = TokenizationResumeAndVacancies.job_descriptions()
+    job_tokens: dict[int, str] = TokenizationResumeAndVacancies.job_descriptions()[0]
     for id_, job in job_tokens.items():
         common_tokens: set = set(resume_tokens).intersection(set(job))
         missing_tokens: set = set(job) - set(resume_tokens)

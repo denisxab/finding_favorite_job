@@ -42,20 +42,18 @@ class TokenizationResumeAndVacancies:
         return client_api_text_to_tokens(read_resume_text())
 
     @staticmethod
-    def job_descriptions():
+    def job_descriptions() -> tuple[dict[int, list[str]], dict[int, str]]:
         """
         Токенизация текста вакансий
         """
         Session = sessionmaker(bind=BaseEngineSql)
         with Session() as session:
-            job_descriptions = (
-                session.query(Vacancy.id, Vacancy.description).filter(
-                    # Открыта
-                    # Vacancy.type_open == "open",
-                    # Не откликался на вакансию
-                    Vacancy.send_offer
-                    == False,  # noqa E712
-                )
+            job_descriptions = session.query(Vacancy.id, Vacancy.description).filter(
+                # Открыта
+                # Vacancy.type_open == "open",
+                # Не откликался на вакансию
+                Vacancy.send_offer
+                == False,  # noqa E712
             )
 
         job_descriptions = {job[0]: job[1] for job in job_descriptions}
@@ -72,4 +70,4 @@ class TokenizationResumeAndVacancies:
                 for (id_, _), tokens in zip(job_descriptions.items(), results)
             }
 
-        return asyncio.run(process_all())
+        return asyncio.run(process_all()), job_descriptions
